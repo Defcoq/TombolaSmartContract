@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Document</title>
     <link rel="stylesheet" type="text/css" href="main.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.2-rc.0/web3.min.js"></script>
+    <script src="./node_modules/web3/dist/web3.min.js">
     </script>
 </head>
 <body> 
@@ -30,6 +30,7 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js">
     </script>
     <script>
+        var web3;
         if (typeof web3 !== 'undefined') {
             async function enableAccounts() {
                 await ethereum.enable(); }
@@ -42,7 +43,7 @@
         }
 
         var abi =- [ { "constant": false, "inputs": [], "name": "kill", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "getStatus", "outputs": [ { "name": "", "type": "uint256" }, { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "name": "number", "type": "uint256" } ], "name": "bet", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [], "name": "getWinningNumber", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "inputs": [ { "name": "_minWager", "type": "uint256" } ], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "number", "type": "uint256" } ], "name": "WinningNumber", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "players", "type": "uint256" }, { "indexed": false, "name": "maxPlayers", "type": "uint256" } ], "name": "Status", "type": "event" } ]
-
+   console.log("web3.eth",web3.eth);
         var bettingContract = web3.eth.contract(abi)
 
         //---change the address below to that of your own---
