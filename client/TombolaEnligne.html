@@ -26,29 +26,36 @@
             <h2 id="result"></h2> 
             <h2 id="status"></h2>
         </center>        
-    </div>    
+    </div>  
+      
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js">
     </script>
     <script>
-        var web3;
+    // var web3;
+    var web3Provider;
         if (typeof web3 !== 'undefined') {
+           // alert(1);
+            web3Provider = web3.currentProvider;
             async function enableAccounts() {
                 await ethereum.enable(); }
             enableAccounts();
         } else {
             // set the provider you want from Web3.providers
+           // alert(2);
             web3 = new Web3(
                 new Web3.providers.HttpProvider(
                 "http://localhost:7545"));
+         web3Provider = web3; 
         }
 
-        var abi =- [ { "constant": false, "inputs": [], "name": "kill", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "getStatus", "outputs": [ { "name": "", "type": "uint256" }, { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "name": "number", "type": "uint256" } ], "name": "bet", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [], "name": "getWinningNumber", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "inputs": [ { "name": "_minWager", "type": "uint256" } ], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "number", "type": "uint256" } ], "name": "WinningNumber", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "players", "type": "uint256" }, { "indexed": false, "name": "maxPlayers", "type": "uint256" } ], "name": "Status", "type": "event" } ]
-   console.log("web3.eth",web3.eth);
-        var bettingContract = web3.eth.contract(abi)
+        web3 = new Web3(web3Provider);
+
+        var abi =[ { "constant": false, "inputs": [], "name": "kill", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "getStatus", "outputs": [ { "name": "", "type": "uint256" }, { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "name": "number", "type": "uint256" } ], "name": "bet", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [], "name": "getWinningNumber", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "inputs": [ { "name": "_minWager", "type": "uint256" } ], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "number", "type": "uint256" } ], "name": "WinningNumber", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "players", "type": "uint256" }, { "indexed": false, "name": "maxPlayers", "type": "uint256" } ], "name": "Status", "type": "event" } ];
+   console.log("web3.eth",web3);
+        var bettingContract = web3.eth.contract(abi);
 
         //---change the address below to that of your own---
-        var contractAddress = 
-            ' 0x652b8BF88385a79ab18775d5491b457a249BCdDf';
+        var contractAddress = '0x652b8BF88385a79ab18775d5491b457a249BCdDf';
         var contract = bettingContract.at(contractAddress);        
 
         var _minWager = 1;
@@ -57,7 +64,7 @@
         var winnningNumberEvent = contract.WinningNumber();
         winnningNumberEvent.watch((error, result) => {
             if (!error){
-                $("#result").html("Winning Number is: " + 
+                $("#result").html("le nombre gagnant est : " + 
                     result.args.number); 
             }
         });
@@ -68,7 +75,7 @@
             if (!error){
                 $("#status").html("Status: " + 
                     result.args.players + 
-                    " of " + result.args.maxPlayers); 
+                    " de " + result.args.maxPlayers); 
             }
         });
 
@@ -78,25 +85,33 @@
                 if (!error){
                     $("#status").html("Status: " + 
                         result[0].c[0] + 
-                        " of " + result[1].c[0]);                     
+                        " de " + result[1].c[0]);                     
                 }    
         });
 
         $("#btnBet").click(function() {
             var numberToWager = $("#numberToWager").val();
             var etherToWager = $("#etherToWager").val();
-            contract.bet(numberToWager, {
+            web3.eth.getAccounts(function(error, accounts) {
+               var account = accounts[0];
+               console.log("account =>", account);
+               console.log("web3.eth.defaultAccount =>", web3.eth.defaultAccount);
+               contract.bet(numberToWager, {
                 gas: 300000,
-                from: web3.eth.defaultAccount,
+                from: account,
                 value: web3.toWei(etherToWager, 'ether')
             }, (err, result) => {
                 if (err){
                     $("#result").html(err); 
                 } else {
                     $("#result").html(
-                    "Number has been submitted for betting."); 
+                    "le nombre a été soumis au paris."); 
                 }  
             });
+            });
+
+            //alert(etherToWager);
+         
         });
     </script>
 </body>
